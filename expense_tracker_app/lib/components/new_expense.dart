@@ -1,4 +1,5 @@
 import 'package:expense_tracker_app/models/custom_text_display.dart';
+import 'package:expense_tracker_app/models/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,11 +13,20 @@ class NewExpenseEntry extends StatefulWidget {
 class _NewExpenseEntryState extends State<NewExpenseEntry> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  DateTime? _selectedDate;
+  Category selectedCategory = Category.leisure;
 
-  void _presentDatePicker(){
+  void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
-    showDatePicker(context: context, firstDate: firstDate, lastDate: now);
+    final pickedDate = await showDatePicker(
+      context: context,
+      firstDate: firstDate,
+      lastDate: now,
+    );
+    setState(() {
+      _selectedDate = pickedDate;
+    });
   }
 
   @override
@@ -71,19 +81,57 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CustomTextDisplay(
-                      text: 'selected date',
+                      text:
+                          _selectedDate == null
+                              ? 'No date selected'
+                              : formatter.format(_selectedDate!),
                       fontSize: 16,
                       color: Colors.black,
                     ),
-                    IconButton(onPressed: _presentDatePicker , icon: Icon(Icons.calendar_month))
+                    IconButton(
+                      onPressed: _presentDatePicker,
+                      icon: Icon(Icons.calendar_month),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-
+          SizedBox(height: 30,),
           Row(
             children: [
+              DropdownButton(
+                value: selectedCategory,
+                items:
+                    Category.values
+                        .map(
+                          (category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(category.name.toUpperCase()),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(() {
+                    selectedCategory = value;
+                  });
+                },
+              ),
+              Spacer(),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: CustomTextDisplay(
+                  text: 'cancel',
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+
               ElevatedButton(
                 onPressed: () {
                   print('=== BOTÓN PRESIONADO ===');
@@ -92,18 +140,7 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
                   print('=== FIN DEBUG ===');
                 },
                 child: CustomTextDisplay(
-                  text: 'Save expense',
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: CustomTextDisplay(
-                  text: 'cancel expense',
+                  text: 'save',
                   fontSize: 14,
                   color: Colors.black,
                 ),
