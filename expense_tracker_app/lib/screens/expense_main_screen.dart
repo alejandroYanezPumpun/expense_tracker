@@ -15,7 +15,7 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
   final List<Expense> _registeredExpenses = [
 
     Expense(title: 'flutter curse', amount: 100, date: DateTime.now(), category: Category.work),
-    Expense(title: 'maldivas', amount: 4000, date: DateTime.now(), category: Category.travle),
+    Expense(title: 'maldivas', amount: 4000, date: DateTime.now(), category: Category.travel),
     Expense(title: 'cinema', amount: 20, date: DateTime.now(), category: Category.leisure)
 
   ];
