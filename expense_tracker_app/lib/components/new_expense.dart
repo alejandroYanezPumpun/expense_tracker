@@ -29,6 +29,31 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
     });
   }
 
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsValid = enteredAmount == null || enteredAmount <= 0;
+    if (_titleController.text.trim().isEmpty ||
+        amountIsValid ||
+        _selectedDate == null) {
+      showDialog(
+        context: context,
+        builder:
+            (ctx) => AlertDialog(
+              title: CustomTextDisplay(
+                text: 'invalid input',
+                fontSize: 16,
+                color: Colors.black,
+              ),
+              content: CustomTextDisplay(text: 'Please make sure a valid title, date, amount and category was selected', fontSize: 16, color: Colors.black),
+              actions: [
+                TextButton(onPressed: () {Navigator.pop(ctx);}, child: CustomTextDisplay(text: 'Okay', fontSize: 16, color: Colors.black))
+              ],
+            ),
+      );
+      return;
+    }
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -97,7 +122,7 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
               ),
             ],
           ),
-          SizedBox(height: 30,),
+          SizedBox(height: 30),
           Row(
             children: [
               DropdownButton(
@@ -134,10 +159,7 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
 
               ElevatedButton(
                 onPressed: () {
-                  print('=== BOTÓN PRESIONADO ===');
-                  print('Valor del título: ${_titleController.text}');
-                  print('Valor del título: ${_amountController.text}');
-                  print('=== FIN DEBUG ===');
+                  _submitExpenseData();
                 },
                 child: CustomTextDisplay(
                   text: 'save',
