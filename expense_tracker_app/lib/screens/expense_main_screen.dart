@@ -73,6 +73,42 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
       date: DateTime.now().subtract(Duration(days: 3)),
       category: Category.leisure,
     ),
+    Expense(
+      title: 'Lunch at Restaurant',
+      amount: 15.99,
+      date: DateTime.now().subtract(Duration(days: 1)),
+      category: Category.food,
+    ),
+    Expense(
+      title: 'Cinema Tickets',
+      amount: 25.50,
+      date: DateTime.now().subtract(Duration(days: 3)),
+      category: Category.leisure,
+    ),
+    Expense(
+      title: 'Lunch at Restaurant',
+      amount: 15.99,
+      date: DateTime.now().subtract(Duration(days: 1)),
+      category: Category.food,
+    ),
+    Expense(
+      title: 'Cinema Tickets',
+      amount: 25.50,
+      date: DateTime.now().subtract(Duration(days: 3)),
+      category: Category.leisure,
+    ),
+    Expense(
+      title: 'Lunch at Restaurant',
+      amount: 15.99,
+      date: DateTime.now().subtract(Duration(days: 1)),
+      category: Category.food,
+    ),
+    Expense(
+      title: 'Cinema Tickets',
+      amount: 25.50,
+      date: DateTime.now().subtract(Duration(days: 3)),
+      category: Category.leisure,
+    ),
   ];
 
   double get _totalExpenses {
@@ -91,9 +127,12 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
       ),
     );
     if (_registeredExpenses.isNotEmpty) {
-      mainContent = ExpensesList(
-        expenses: _registeredExpenses,
-        onRemoved: _removeExpense,
+      mainContent = Padding(
+        padding: const EdgeInsets.only(bottom: 90), // Espacio para los botones flotantes
+        child: ExpensesList(
+          expenses: _registeredExpenses,
+          onRemoved: _removeExpense,
+        ),
       );
     }
     return Scaffold(
@@ -117,7 +156,7 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
         children: [
           // Total de gastos (abajo izquierda)
           Positioned(
-            bottom: 16,
+            bottom: 6,
             left: 30,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -142,7 +181,7 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
                   ),
                   SizedBox(width: 4),
                   Text(
-                    'Total: \$${_totalExpenses.toStringAsFixed(2)}',
+                    'Total Spent: \$${_totalExpenses.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -155,14 +194,14 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
           ),
           // Botón de cambiar tema (abajo derecha)
           Positioned(
-            bottom: 16,
-            right: 16,
+            bottom: 6,
+            right: 5,
             child: FloatingActionButton(
               onPressed: widget.onThemeToggle,
+              tooltip: widget.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
               child: Icon(
                 widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
               ),
-              tooltip: widget.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
             ),
           ),
         ],

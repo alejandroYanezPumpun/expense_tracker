@@ -1,5 +1,6 @@
 import 'package:expense_tracker_app/screens/expense_main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 96, 59, 181),
@@ -11,7 +12,13 @@ var kDarkColorScheme = ColorScheme.fromSeed(
 );
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+  ]).then((fn) {
+    runApp(MyApp());
+  });
+  
 }
 
 class MyApp extends StatefulWidget {
