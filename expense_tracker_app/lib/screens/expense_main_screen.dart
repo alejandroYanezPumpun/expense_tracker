@@ -14,10 +14,19 @@ class ExpenseMainScreen extends StatefulWidget {
 class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
   void _openAddExpensesOverlay() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder:
-          (ctx) => NewExpenseEntry()
+          (ctx) => NewExpenseEntry(onAddExpense: _addExpense,)
     );
+  }
+
+  void _addExpense(Expense expense) {
+
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
+
   }
 
   final List<Expense> _registeredExpenses = [
