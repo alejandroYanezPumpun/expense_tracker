@@ -31,6 +31,7 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
     setState(() {
       _registeredExpenses.add(expense);
     });
+    Navigator.of(context).pop();
   }
 
   void _removeExpense(Expense expense) {
@@ -74,40 +75,40 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
       category: Category.leisure,
     ),
     Expense(
-      title: 'Lunch at Restaurant',
-      amount: 15.99,
-      date: DateTime.now().subtract(Duration(days: 1)),
-      category: Category.food,
+      title: 'Flight Tickets',
+      amount: 299.99,
+      date: DateTime.now().subtract(Duration(days: 5)),
+      category: Category.travel,
     ),
     Expense(
-      title: 'Cinema Tickets',
-      amount: 25.50,
-      date: DateTime.now().subtract(Duration(days: 3)),
+      title: 'Office Supplies',
+      amount: 45.00,
+      date: DateTime.now().subtract(Duration(days: 2)),
+      category: Category.work,
+    ),
+    Expense(
+      title: 'Coffee Meeting',
+      amount: 12.99,
+      date: DateTime.now().subtract(Duration(days: 4)),
+      category: Category.work,
+    ),
+    Expense(
+      title: 'Movie Night',
+      amount: 18.50,
+      date: DateTime.now().subtract(Duration(days: 6)),
       category: Category.leisure,
     ),
     Expense(
-      title: 'Lunch at Restaurant',
-      amount: 15.99,
-      date: DateTime.now().subtract(Duration(days: 1)),
+      title: 'Breakfast',
+      amount: 8.75,
+      date: DateTime.now().subtract(Duration(days: 7)),
       category: Category.food,
     ),
     Expense(
-      title: 'Cinema Tickets',
-      amount: 25.50,
-      date: DateTime.now().subtract(Duration(days: 3)),
-      category: Category.leisure,
-    ),
-    Expense(
-      title: 'Lunch at Restaurant',
-      amount: 15.99,
-      date: DateTime.now().subtract(Duration(days: 1)),
-      category: Category.food,
-    ),
-    Expense(
-      title: 'Cinema Tickets',
-      amount: 25.50,
-      date: DateTime.now().subtract(Duration(days: 3)),
-      category: Category.leisure,
+      title: 'Uber Ride',
+      amount: 22.30,
+      date: DateTime.now().subtract(Duration(days: 8)),
+      category: Category.travel,
     ),
   ];
 
@@ -117,6 +118,9 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isLandscape = width > MediaQuery.of(context).size.height;
+    
     Widget mainContent = const Center(
       child: Text(
         'No expenses found. Start adding some!',
@@ -126,40 +130,79 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
         ),
       ),
     );
+    
     if (_registeredExpenses.isNotEmpty) {
       mainContent = Padding(
-        padding: const EdgeInsets.only(bottom: 90), // Espacio para los botones flotantes
+        padding: EdgeInsets.only(bottom: isLandscape ? 65 : 82),
         child: ExpensesList(
           expenses: _registeredExpenses,
           onRemoved: _removeExpense,
+          isLandscape: isLandscape,
         ),
       );
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Expense Tracker',
+          'Add a new expense',
         ),
         actions: [
-          IconButton(onPressed: _openAddExpensesOverlay, icon: Icon(Icons.add)),
+          IconButton(onPressed: _openAddExpensesOverlay, icon: Icon(Icons.add),iconSize: 36,),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 18),
-          Chart(expenses: _registeredExpenses),
-          SizedBox(height: 2),
-          Expanded(child: mainContent),
-        ],
-      ),
+      body: isLandscape 
+        ? Row(
+            children: [
+              // Chart a la izquierda en modo apaisado
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Chart(expenses: _registeredExpenses),
+                ),
+              ),
+              // Lista de expenses a la derecha en modo apaisado
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    SizedBox(height: 16),
+                    Text(
+                      'Expense List',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Expanded(child: mainContent),
+                  ],
+                ),
+              ),
+            ],
+          )
+        : Column(
+            // Layout vertical en modo retrato
+            children: [
+              SizedBox(height: 18),
+              Chart(expenses: _registeredExpenses),
+              SizedBox(height: 2),
+              Expanded(child: mainContent),
+            ],
+          ),
       floatingActionButton: Stack(
         children: [
           // Total de gastos (abajo izquierda)
           Positioned(
-            bottom: 6,
+            bottom: 7,
             left: 30,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: isLandscape ? 12 : 16, 
+                vertical: isLandscape ? 8 : 12,
+              ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(20),
@@ -177,13 +220,13 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
                   Icon(
                     Icons.attach_money,
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    size: 20,
+                    size: isLandscape ? 18 : 20,
                   ),
                   SizedBox(width: 4),
                   Text(
-                    'Total Spent: \$${_totalExpenses.toStringAsFixed(2)}',
+                    'Total: \$${_totalExpenses.toStringAsFixed(2)}',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: isLandscape ? 14 : 16,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
@@ -194,13 +237,15 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
           ),
           // Botón de cambiar tema (abajo derecha)
           Positioned(
-            bottom: 6,
-            right: 5,
+            bottom: 1,
+            right: 6,
             child: FloatingActionButton(
+              mini: isLandscape, // Botón más pequeño en modo apaisado
               onPressed: widget.onThemeToggle,
               tooltip: widget.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
               child: Icon(
                 widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                size: isLandscape ? 20 : 24,
               ),
             ),
           ),

@@ -69,7 +69,7 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
         category: selectedCategory,
       ),
     );
-    Navigator.pop(context);
+    // Eliminé Navigator.pop(context); de aquí
   }
 
   @override

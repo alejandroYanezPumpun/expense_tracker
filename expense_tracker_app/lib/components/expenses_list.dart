@@ -7,14 +7,17 @@ class ExpensesList extends StatelessWidget {
     super.key,
     required this.expenses,
     required this.onRemoved,
+    required this.isLandscape,
   });
 
   final void Function(Expense expense) onRemoved;
   final List<Expense> expenses;
+  final bool isLandscape;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      padding: EdgeInsets.only(bottom: isLandscape ? 70 : 80),
       itemCount: expenses.length,
       itemBuilder: (ctx, index) => Container(
         margin: EdgeInsets.fromLTRB(16, 8, 16, 6),
