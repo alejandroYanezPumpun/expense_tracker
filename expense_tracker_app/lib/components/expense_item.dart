@@ -1,4 +1,3 @@
-import 'package:expense_tracker_app/models/custom_text_display.dart';
 import 'package:expense_tracker_app/models/expense.dart';
 import 'package:flutter/material.dart';
 
@@ -9,31 +8,50 @@ class ExpenseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 1),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomTextDisplay(
-              text: expense.title,
-              fontSize: 16,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+            Text(
+              expense.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 4,),
+            SizedBox(height: 4),
             Row(
               children: [
-                CustomTextDisplay(text: '\$${expense.amount.toStringAsFixed(2)}', fontSize: 14, color: Colors.black),
+                Text(
+                  '\$${expense.amount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
                 Spacer(),
                 Row(
                   children: [
                     Icon(categoryIcons[expense.category]),
-                    SizedBox(width: 8,),
-                    CustomTextDisplay(text: expense.formattedDate, fontSize: 14, color: Colors.black)
-
+                    SizedBox(width: 8),
+                    Text(
+                      expense.formattedDate,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ],
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

@@ -1,4 +1,3 @@
-import 'package:expense_tracker_app/models/custom_text_display.dart';
 import 'package:expense_tracker_app/models/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,18 +37,27 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
         _selectedDate == null) {
       showDialog(
         context: context,
-        builder:
-            (ctx) => AlertDialog(
-              title: CustomTextDisplay(
-                text: 'invalid input',
-                fontSize: 16,
-                color: Colors.black,
-              ),
-              content: CustomTextDisplay(text: 'Please make sure a valid title, date, amount and category was selected', fontSize: 16, color: Colors.black),
-              actions: [
-                TextButton(onPressed: () {Navigator.pop(ctx);}, child: CustomTextDisplay(text: 'Okay', fontSize: 16, color: Colors.black))
-              ],
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            'Invalid Input',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
+          ),
+          content: Text(
+            'Please make sure a valid title, date, amount and category was selected.',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: Text('Okay'),
+            ),
+          ],
+        ),
       );
       return;
     }
@@ -74,18 +82,14 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16,56,16,16),
+      padding: EdgeInsets.fromLTRB(16, 56, 16, 16),
       child: Column(
         children: [
           TextField(
             controller: _titleController,
             maxLength: 50,
             decoration: InputDecoration(
-              label: CustomTextDisplay(
-                text: 'Title',
-                fontSize: 16,
-                color: Colors.black,
-              ),
+              labelText: 'Title',
             ),
           ),
           Row(
@@ -98,30 +102,22 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
                   decoration: InputDecoration(
-                    label: CustomTextDisplay(
-                      text: 'amount',
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
+                    labelText: 'Amount',
                     prefixText: '\$ ',
                   ),
                 ),
               ),
-
               SizedBox(width: 16),
-
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CustomTextDisplay(
-                      text:
-                          _selectedDate == null
-                              ? 'No date selected'
-                              : formatter.format(_selectedDate!),
-                      fontSize: 16,
-                      color: Colors.black,
+                    Text(
+                      _selectedDate == null
+                          ? 'No date selected'
+                          : formatter.format(_selectedDate!),
+                      style: TextStyle(fontSize: 16),
                     ),
                     IconButton(
                       onPressed: _presentDatePicker,
@@ -137,15 +133,14 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
             children: [
               DropdownButton(
                 value: selectedCategory,
-                items:
-                    Category.values
-                        .map(
-                          (category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category.name.toUpperCase()),
-                          ),
-                        )
-                        .toList(),
+                items: Category.values
+                    .map(
+                      (category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category.name.toUpperCase()),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (value) {
                   if (value == null) {
                     return;
@@ -160,22 +155,12 @@ class _NewExpenseEntryState extends State<NewExpenseEntry> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: CustomTextDisplay(
-                  text: 'cancel',
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
+                child: Text('Cancel'),
               ),
-
+              SizedBox(width: 8),
               ElevatedButton(
-                onPressed: () {
-                  _submitExpenseData();
-                },
-                child: CustomTextDisplay(
-                  text: 'save',
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
+                onPressed: _submitExpenseData,
+                child: Text('Save'),
               ),
             ],
           ),

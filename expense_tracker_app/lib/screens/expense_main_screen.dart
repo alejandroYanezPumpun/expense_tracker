@@ -1,11 +1,18 @@
 import 'package:expense_tracker_app/components/expenses_list.dart';
 import 'package:expense_tracker_app/components/new_expense.dart';
-import 'package:expense_tracker_app/models/custom_text_display.dart';
+import 'package:expense_tracker_app/models/charts/chart.dart';
 import 'package:expense_tracker_app/models/expense.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseMainScreen extends StatefulWidget {
-  const ExpenseMainScreen({super.key});
+  final VoidCallback onThemeToggle;
+  final bool isDarkMode;
+  
+  const ExpenseMainScreen({
+    super.key,
+    required this.onThemeToggle,
+    required this.isDarkMode,
+  });
 
   @override
   State<ExpenseMainScreen> createState() => _ExpenseMainScreenState();
@@ -34,29 +41,53 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: Duration(seconds: 3),
-        content: CustomTextDisplay(
-          text: 'Espense ${expense.title} was deleted',
-          fontSize: 18,
-          color: Colors.white,
+        content: Text(
+          'Expense ${expense.title} was deleted',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+          ),
         ),
-        action: SnackBarAction(label: 'Undo', onPressed: () {
-          setState(() {
-            _registeredExpenses.insert(expenseIndex, expense);
-          });
-        }),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(expenseIndex, expense);
+            });
+          },
+        ),
       ),
     );
   }
 
-  final List<Expense> _registeredExpenses = [];
+  final List<Expense> _registeredExpenses = [
+    Expense(
+      title: 'Lunch at Restaurant',
+      amount: 15.99,
+      date: DateTime.now().subtract(Duration(days: 1)),
+      category: Category.food,
+    ),
+    Expense(
+      title: 'Cinema Tickets',
+      amount: 25.50,
+      date: DateTime.now().subtract(Duration(days: 3)),
+      category: Category.leisure,
+    ),
+  ];
+
+  double get _totalExpenses {
+    return _registeredExpenses.fold(0.0, (sum, expense) => sum + expense.amount);
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget mainContent = const Center(
-      child: CustomTextDisplay(
-        text: 'No expenses found. Start adding some!',
-        fontSize: 20,
-        color: Colors.black,
+      child: Text(
+        'No expenses found. Start adding some!',
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black54,
+        ),
       ),
     );
     if (_registeredExpenses.isNotEmpty) {
@@ -67,10 +98,8 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: CustomTextDisplay(
-          text: 'expense tracker',
-          fontSize: 16,
-          color: Colors.black,
+        title: Text(
+          'Expense Tracker',
         ),
         actions: [
           IconButton(onPressed: _openAddExpensesOverlay, icon: Icon(Icons.add)),
@@ -78,12 +107,64 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
       ),
       body: Column(
         children: [
-          CustomTextDisplay(
-            text: 'placeholder',
-            fontSize: 20,
-            color: Colors.black,
-          ),
+          SizedBox(height: 18),
+          Chart(expenses: _registeredExpenses),
+          SizedBox(height: 2),
           Expanded(child: mainContent),
+        ],
+      ),
+      floatingActionButton: Stack(
+        children: [
+          // Total de gastos (abajo izquierda)
+          Positioned(
+            bottom: 16,
+            left: 30,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.attach_money,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    size: 20,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    'Total: \$${_totalExpenses.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Botón de cambiar tema (abajo derecha)
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: widget.onThemeToggle,
+              child: Icon(
+                widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              ),
+              tooltip: widget.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+            ),
+          ),
         ],
       ),
     );
