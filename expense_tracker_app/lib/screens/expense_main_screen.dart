@@ -29,6 +29,14 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
 
   }
 
+    void _removeExpense(Expense expense) {
+
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+
+  }
+
   final List<Expense> _registeredExpenses = [
     Expense(
       title: 'flutter curse',
@@ -70,7 +78,7 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
             fontSize: 20,
             color: Colors.black,
           ),
-          Expanded(child: ExpensesList(expenses: _registeredExpenses)),
+          Expanded(child: ExpensesList(expenses: _registeredExpenses,onRemoved: _removeExpense,)),
         ],
       ),
     );
