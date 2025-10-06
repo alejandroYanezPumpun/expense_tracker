@@ -16,50 +16,55 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
-      builder:
-          (ctx) => NewExpenseEntry(onAddExpense: _addExpense,)
+      builder: (ctx) => NewExpenseEntry(onAddExpense: _addExpense),
     );
   }
 
   void _addExpense(Expense expense) {
-
     setState(() {
       _registeredExpenses.add(expense);
     });
-
   }
 
-    void _removeExpense(Expense expense) {
-
+  void _removeExpense(Expense expense) {
+    final expenseIndex = _registeredExpenses.indexOf(expense);
     setState(() {
       _registeredExpenses.remove(expense);
     });
-
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 3),
+        content: CustomTextDisplay(
+          text: 'Espense ${expense.title} was deleted',
+          fontSize: 18,
+          color: Colors.white,
+        ),
+        action: SnackBarAction(label: 'Undo', onPressed: () {
+          setState(() {
+            _registeredExpenses.insert(expenseIndex, expense);
+          });
+        }),
+      ),
+    );
   }
 
-  final List<Expense> _registeredExpenses = [
-    Expense(
-      title: 'flutter curse',
-      amount: 100,
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      title: 'maldivas',
-      amount: 4000,
-      date: DateTime.now(),
-      category: Category.travel,
-    ),
-    Expense(
-      title: 'cinema',
-      amount: 20,
-      date: DateTime.now(),
-      category: Category.leisure,
-    ),
-  ];
+  final List<Expense> _registeredExpenses = [];
 
   @override
   Widget build(BuildContext context) {
+    Widget mainContent = const Center(
+      child: CustomTextDisplay(
+        text: 'No expenses found. Start adding some!',
+        fontSize: 20,
+        color: Colors.black,
+      ),
+    );
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpensesList(
+        expenses: _registeredExpenses,
+        onRemoved: _removeExpense,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: CustomTextDisplay(
@@ -78,7 +83,7 @@ class _ExpenseMainScreenState extends State<ExpenseMainScreen> {
             fontSize: 20,
             color: Colors.black,
           ),
-          Expanded(child: ExpensesList(expenses: _registeredExpenses,onRemoved: _removeExpense,)),
+          Expanded(child: mainContent),
         ],
       ),
     );
